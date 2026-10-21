@@ -14,7 +14,7 @@ export module pid_fixedpoint;
 // then use std::numeric_limits<InternalType>::max() to get the max value of the internal type.
 
 // Primary template: Matches primitives (when std::is_class is false)
-template <typename T, typename Enable = void>
+template <typename T, typename = void>
 struct automated_traits {
     static constexpr T max() { 
         return std::numeric_limits<T>::max(); 
