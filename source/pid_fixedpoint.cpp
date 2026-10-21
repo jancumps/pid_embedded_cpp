@@ -2,8 +2,32 @@ module;
 
 #include <limits>
 #include <concepts>
+#include <type_traits>
 
 export module pid_fixedpoint;
+
+// 1. Primary Template (Fallback / Catch-all)
+template <typename T, typename = void>
+struct dsp_traits {
+    // If T is a standard floating point (like float), use standard numeric_limits
+    static constexpr T max() { 
+        static_assert(std::is_floating_point_v<T>, "Type not supported by dsp_traits!");
+        return std::numeric_limits<T>::max(); 
+    }
+};
+
+// 2. Advanced Specialization: Automatically matches ANY type that defines a 'storage_type'
+template <typename T>
+struct dsp_traits<T, std::void_t<typename T::storage_type>> {
+    static constexpr T max() {
+        // 1. Extract the underlying raw primitive (e.g., int16_t for Q15, int32_t for Q31)
+        using RawStorage = typename T::storage_type;
+        
+        // 2. Get the maximum possible raw integer value (e.g., 0x7FFF for int16_t)
+        // 3. Construct and return the matching ARM type wrapped around that value
+        return T(std::numeric_limits<RawStorage>::max());
+    }
+};
 
 export namespace pid_fixedpoint {  
 
@@ -20,7 +44,8 @@ template<typename T> class pid {
             "Error: This class doesn't support template types that can't multiply themselves");        
     }
 
-    static constexpr  T out_max {std::numeric_limits<typename T::value_type>::max()};
+    // static constexpr  T out_max {std::numeric_limits<typename T::value_type>::max()};
+    static constexpr  T out_max {dsp_traits<T>::max()}; // Use dsp_traits to determine the maximum value for type T
     static constexpr  T out_min {0};        // Minimum allowable output
 
     void init(T kp, T ki, T kd, bool reset = true) {
