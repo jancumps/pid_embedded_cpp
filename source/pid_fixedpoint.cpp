@@ -6,7 +6,14 @@ module;
 
 export module pid_fixedpoint;
 
-// 1. Primary template: Matches primitives (when std::is_class is false)
+
+// to avoid that PID saturates the output, it's neccessary to know the max allowed value
+// different approach is needed for base types and classes / structs, 
+// because for base types we can use std::numeric_limits<T>::max() 
+// but for classes / structs we need to extract the internal type and 
+// then use std::numeric_limits<InternalType>::max() to get the max value of the internal type.
+
+// Primary template: Matches primitives (when std::is_class is false)
 template <typename T, typename Enable = void>
 struct automated_traits {
     static constexpr T max() { 
@@ -14,7 +21,7 @@ struct automated_traits {
     }
 };
 
-// 2. Specialization: Automatically matches ANY class or struct
+// Specialization: Automatically matches ANY class or struct
 template <typename T>
 struct automated_traits<T, typename std::enable_if<std::is_class<T>::value>::type> {
     static constexpr T max() {
