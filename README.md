@@ -6,7 +6,7 @@
 
 C++ PID class, with template support.
 
-You define what data type it uses. 
+You define what data type it uses.  
 For embedded controllers without FPU, it can use the ARM DSP++ fixed floating point types.
 
 Also works with floats and doubles, better suited for controllers and MCUs with floating point support.
