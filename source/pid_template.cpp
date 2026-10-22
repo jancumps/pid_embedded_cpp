@@ -4,7 +4,7 @@ module;
 #include <concepts>
 #include <type_traits>
 
-export module pid_fixedpoint;
+export module pid;
 
 
 // to avoid that PID saturates the output, it's neccessary to know the max allowed value
@@ -29,12 +29,12 @@ struct automated_traits<T, typename std::enable_if<std::is_class<T>::value>::typ
     }
 };
 
-export namespace pid_fixedpoint {  
-
 template <typename T>
 concept SupportsSelfMultiplication = requires(T a, T b) {
     { a * b } -> std::same_as<T>;
 };
+
+export namespace pid {  
 
 template<typename T> class pid {
    public:
@@ -113,4 +113,4 @@ private:
     }
 };
     
-} // namespace pid_fixedpoint
+} // namespace pid
