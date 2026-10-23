@@ -36,7 +36,7 @@ concept SupportsSelfMultiplication = requires(T a, T b) {
 
 export namespace pid {  
 
-template<typename T> class pid {
+template<typename T, bool negative = false> class pid {
    public:
     pid(T kp, T ki, T kd) : kp(kp), ki(ki), kd(kd) {
         // Provide a clear message to display if compilation fails
