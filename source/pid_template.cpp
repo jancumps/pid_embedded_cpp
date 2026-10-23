@@ -14,30 +14,24 @@ export module pid;
 // then use std::numeric_limits<InternalType>::max() to get the max value of the internal type.
 
 // Primary template: Matches primitives (when std::is_class is false)
-template <typename T, typename = void>
+template <typename T, bool negative, typename = void>
 struct automated_traits {
     static constexpr T max() { 
         return std::numeric_limits<T>::max(); 
     }
     static constexpr T min() { 
-        return 0; 
-    }
-    static constexpr T lowest() { 
-        return std::numeric_limits<T>::min(); 
+        return negative ? std::numeric_limits<T>::min() : 0; 
     }
 };
 
 // Specialization: Automatically matches ANY class or struct
-template <typename T>
+template <typename T, bool negative>
 struct automated_traits<T, typename std::enable_if<std::is_class<T>::value>::type> {
     static constexpr T max() {
         return T(std::numeric_limits<typename T::value_type>::max());
     }
     static constexpr T min() {
-        return T {0};
-    }
-    static constexpr T lowest() {
-        return T(std::numeric_limits<typename T::value_type>::lowest());
+        return negative ? T(std::numeric_limits<typename T::value_type>::lowest()) : T {0};
     }
 };
 
@@ -58,7 +52,7 @@ template<typename T, bool negative = false> class pid {
 
     // static constexpr  T out_max {std::numeric_limits<typename T::value_type>::max()};
     static constexpr T out_max {automated_traits<T>::max()}; // Use dsp_traits to determine the maximum value for type T
-    static constexpr T out_min negative? automated_traits<T>::lowest() : automated_traits<T>::min();        // Minimum allowable output
+    static constexpr T out_min {automated_traits<T>::min()}; // Minimum allowable output
 
     void init(T kp, T ki, T kd, bool reset = true) {
         kp = kp;
