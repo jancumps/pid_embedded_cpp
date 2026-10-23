@@ -26,7 +26,7 @@ struct automated_traits {
 
 // Specialization: Automatically matches ANY class or struct
 template <typename T, bool negative>
-struct automated_traits<T, typename std::enable_if<std::is_class<T>::value>::type> {
+struct automated_traits<T, bool negative, typename std::enable_if<std::is_class<T>::value>::type> {
     static constexpr T max() {
         return T(std::numeric_limits<typename T::value_type>::max());
     }
