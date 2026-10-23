@@ -51,8 +51,8 @@ template<typename T, bool negative = false> class pid {
     }
 
     // static constexpr  T out_max {std::numeric_limits<typename T::value_type>::max()};
-    static constexpr T out_max {automated_traits<T>::max()}; // Use dsp_traits to determine the maximum value for type T
-    static constexpr T out_min {automated_traits<T>::min()}; // Minimum allowable output
+    static constexpr T out_max {automated_traits<T, negative>::max()}; // Use dsp_traits to determine the maximum value for type T
+    static constexpr T out_min {automated_traits<T, negative>::min()}; // Minimum allowable output
 
     void init(T kp, T ki, T kd, bool reset = true) {
         kp = kp;
