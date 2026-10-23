@@ -20,7 +20,7 @@ struct automated_traits {
         return std::numeric_limits<T>::max(); 
     }
     static constexpr T min() { 
-        return negative ? std::numeric_limits<T>::min() : 0; 
+        return negative ? std::numeric_limits<T>::lowest() : 0; 
     }
 };
 
