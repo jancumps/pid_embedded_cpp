@@ -26,8 +26,8 @@ struct automated_traits {
 
 template <typename T>
 concept HasMinMax = requires(T a) {
-    { a::min() };
-    { a::max() };
+    { a.min() };
+    { a.max() };
 };
 
 // Specialization: Automatically matches ANY class or struct
