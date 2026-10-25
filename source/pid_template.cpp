@@ -35,14 +35,14 @@ template <typename T, bool negative>
 struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> {
     static constexpr T max() {
         if constexpr (HasMinMax<T>) {
-            return T::max();
+            return T{}.max();
         } else {
             return T(std::numeric_limits<typename T::value_type>::max());
         }
     }
     static constexpr T min() {
         if constexpr (HasMinMax<T>) {
-            return T::min();
+            return T{}.min();
         } else {
             return negative ? T(std::numeric_limits<typename T::value_type>::lowest()) : T {0};
         }        
