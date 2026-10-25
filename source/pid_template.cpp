@@ -46,7 +46,7 @@ struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::v
 
 template <typename T>
 concept SupportsSelfMultiplication = requires(T a, T b) {
-    { a * b } -> std::same_as<T>;
+    { a * b };
 };
 
 export namespace pid {  
