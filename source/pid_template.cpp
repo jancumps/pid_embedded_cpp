@@ -35,6 +35,29 @@ struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::v
     }
 };
 
+template <typename T, typename Enable = void>
+struct automated_traits {
+    static constexpr bool has_min_max = false;
+};
+
+template <typename T>
+concept HasMinMax = requires(T a) {
+    { a.min() };
+    { a.max() };
+};
+
+template <typename T, bool negative>
+struct automated_traits<T, std::enable_if_t<HasMinMax<T>>> {
+    static constexpr bool has_min_max = true;
+    
+    using value_type = decltype(std::declval<T>().max());
+    
+    static constexpr value_type get_min(T& obj) { return negative? obj.min() : 0; }
+    static constexpr value_type get_max(T& obj) { return obj.max(); }
+};
+
+
+
 template <typename T>
 concept SupportsSelfMultiplication = requires(T a, T b) {
     { a * b } -> std::same_as<T>;
