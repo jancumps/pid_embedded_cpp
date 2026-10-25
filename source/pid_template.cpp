@@ -33,9 +33,7 @@ concept HasMinMax = requires(T a) {
 
 
 template <typename T, bool negative>
-struct automated_traits<T, negative, std::enable_if_t<HasMinMax<T>>> {
-    static constexpr bool has_min_max = true;
-    
+struct automated_traits<T, negative> : std::bool_constant<std::is_class_v<T> && HasMinMax<T>> { 
     using value_type = decltype(std::declval<T>().max());
     
     static constexpr value_type get_min(T& obj) { return negative? obj.min() : 0; }
@@ -44,7 +42,7 @@ struct automated_traits<T, negative, std::enable_if_t<HasMinMax<T>>> {
 
 // Specialization: Automatically matches ANY class or struct
 template <typename T, bool negative>
-struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> {
+struct automated_traits<T, negative> : std::bool_constant<std::is_class_v<T> && !HasMinMax<T>> {
     static constexpr T max() {
         return T(std::numeric_limits<typename T::value_type>::max());
     }
