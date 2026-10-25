@@ -35,11 +35,6 @@ struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::v
     }
 };
 
-template <typename T, typename Enable = void>
-struct automated_traits {
-    static constexpr bool has_min_max = false;
-};
-
 template <typename T>
 concept HasMinMax = requires(T a) {
     { a.min() };
