@@ -24,21 +24,21 @@ struct automated_traits {
     }
 };
 
+template <typename T>
+concept HasMinMax = requires(T a) {
+    { a.min() };
+    { a.max() };
+};
+
 // Specialization: Automatically matches ANY class or struct
 template <typename T, bool negative>
-struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> {
+struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> && ! std::enable_if_t<HasMinMax<T>>> {
     static constexpr T max() {
         return T(std::numeric_limits<typename T::value_type>::max());
     }
     static constexpr T min() {
         return negative ? T(std::numeric_limits<typename T::value_type>::lowest()) : T {0};
     }
-};
-
-template <typename T>
-concept HasMinMax = requires(T a) {
-    { a.min() };
-    { a.max() };
 };
 
 template <typename T, bool negative>
