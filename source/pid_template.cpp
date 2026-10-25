@@ -26,33 +26,28 @@ struct automated_traits {
 
 template <typename T>
 concept HasMinMax = requires(T a) {
-    { a.lowest() }  -> std::same_as<T>;
-    { a.min() }  -> std::same_as<T>;
-    { a.max() }  -> std::same_as<T>;
-};
-
-
-template <typename T, bool negative>
-struct automated_traits<T, negative> : std::bool_constant<std::is_class_v<T> && HasMinMax<T>> { 
-    using value_type = decltype(std::declval<T>().max());
-    
-    static constexpr value_type get_min(T& obj) { return negative? obj.min() : 0; }
-    static constexpr value_type get_max(T& obj) { return obj.max(); }
+    { a.min() };
+    { a.max() };
 };
 
 // Specialization: Automatically matches ANY class or struct
 template <typename T, bool negative>
-struct automated_traits<T, negative> : std::bool_constant<std::is_class_v<T> && !HasMinMax<T>> {
+struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>> {
     static constexpr T max() {
-        return T(std::numeric_limits<typename T::value_type>::max());
+        if constexpr (HasMinMax<T>) {
+            return T::max();
+        } else {
+            return T(std::numeric_limits<typename T::value_type>::max());
+        }
     }
     static constexpr T min() {
-        return negative ? T(std::numeric_limits<typename T::value_type>::lowest()) : T {0};
+        if constexpr (HasMinMax<T>) {
+            return T::min();
+        } else {
+            return negative ? T(std::numeric_limits<typename T::value_type>::lowest()) : T {0};
+        }        
     }
 };
-
-
-
 
 template <typename T>
 concept SupportsSelfMultiplication = requires(T a, T b) {
