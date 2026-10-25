@@ -42,7 +42,7 @@ concept HasMinMax = requires(T a) {
 };
 
 template <typename T, bool negative>
-struct automated_traits<T, std::enable_if_t<HasMinMax<T>>> {
+struct automated_traits<T, negative, std::enable_if_t<HasMinMax<T>>> {
     static constexpr bool has_min_max = true;
     
     using value_type = decltype(std::declval<T>().max());
