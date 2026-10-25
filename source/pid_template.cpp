@@ -32,7 +32,7 @@ concept HasMinMax = requires(T a) {
 
 // Specialization: Automatically matches ANY class or struct
 template <typename T, bool negative>
-struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> && ! std::enable_if_t<HasMinMax<T>>> {
+struct automated_traits<T, negative, typename std::enable_if<std::is_class<T>::value>::type> && std::enable_if_t<!HasMinMax<T>>> {
     static constexpr T max() {
         return T(std::numeric_limits<typename T::value_type>::max());
     }
